@@ -13,9 +13,6 @@ import '../resources/strings.dart';
 import '../resources/text_style.dart';
 
 
-
-const List<String> list = <String>['Selecionar todas', 'Remover todas'];
-
 class MoedasPage extends StatefulWidget {
   const MoedasPage({super.key});
 
@@ -26,10 +23,11 @@ class MoedasPage extends StatefulWidget {
 class _MoedasPageState extends State<MoedasPage> {
   String searchValue = '';
   final tabela = MoedaRepository.tabela;
+
   NumberFormat real = NumberFormat.currency(locale: 'pt_BR', name: 'R\$');
   List<Moeda> selecionadas = [];
   late FavoritasRepository favoritas;
-  String dropdownValue = list.first;
+
 
   appBarDinamica() {
     if (selecionadas.isEmpty) {
@@ -37,16 +35,41 @@ class _MoedasPageState extends State<MoedasPage> {
           actions: [
             IconButton(
               onPressed: () {
-              //  showSearch(context: context, delegate: );
+                //  showSearch(context: context, delegate: );
               },
               icon: const Icon(Icons.search),
             ),
             Padding(
-                padding: const EdgeInsets.only(right: 20.0),
-                child: GestureDetector(
-                  onTap: () {},
-                  child: const Icon(Icons.more_vert),
-                )),
+              padding: const EdgeInsets.only(right: 20.0),
+              child: PopupMenuButton(
+                  icon: const Icon(Icons.more_vert),
+                  itemBuilder: (context) => [
+                        PopupMenuItem(
+                            child: TextButton(
+                          child: const Text("Selecionar todas"),
+                          onPressed: () {
+                            setState(() {
+                             
+                                selecionadas.addAll(tabela);
+                              
+                            });
+
+                            Navigator.pop(context);
+                          },
+                        )),
+                        PopupMenuItem(
+                            child: TextButton(
+                          child: const Text("Remover todas"),
+                          onPressed: () {
+                            setState(() {
+                              selecionadas.clear();
+                            });
+
+                            Navigator.pop(context);
+                          },
+                        )),
+                      ]),
+            )
           ],
           backgroundColor: const Color.fromARGB(255, 26, 35, 29),
           title: const Text(
@@ -56,6 +79,37 @@ class _MoedasPageState extends State<MoedasPage> {
     } else {
       return AppBar(
         backgroundColor: const Color.fromARGB(255, 26, 35, 29),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 20.0),
+            child: PopupMenuButton(
+                icon: const Icon(Icons.more_vert),
+                itemBuilder: (context) => [
+                      PopupMenuItem(
+                          child: TextButton(
+                        child: const Text("Selecionar todas"),
+                        onPressed: () {
+                          setState(() {
+                            selecionadas.addAll(tabela);
+                          });
+
+                          Navigator.pop(context);
+                        },
+                      )),
+                      PopupMenuItem(
+                          child: TextButton(
+                        child: const Text("Remover todas"),
+                        onPressed: () {
+                          setState(() {
+                            selecionadas.clear();
+                          });
+
+                          Navigator.pop(context);
+                        },
+                      )),
+                    ]),
+          )
+        ],
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: (() {
@@ -142,5 +196,3 @@ class _MoedasPageState extends State<MoedasPage> {
     );
   }
 }
-
-

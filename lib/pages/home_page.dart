@@ -29,7 +29,9 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: PageView(
+       physics: const NeverScrollableScrollPhysics(),
         controller: pc,
+        // ignore: sort_child_properties_last
         children: const [
           MoedasPage(),
           FavoritasPage(),
@@ -38,7 +40,7 @@ class _HomePageState extends State<HomePage> {
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: paginaAtual,
-        backgroundColor: Color.fromARGB(255, 58, 70, 58),
+        backgroundColor: const Color.fromARGB(255, 58, 70, 58),
         // ignore: prefer_const_literals_to_create_immutables
         items: [
           const BottomNavigationBarItem(
