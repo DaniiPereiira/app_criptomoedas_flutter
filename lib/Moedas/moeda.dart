@@ -1,5 +1,4 @@
 class Moeda {
-  bool isSelected;
   String icone;
   String nome;
   String sigla;
@@ -10,5 +9,5 @@ class Moeda {
       required this.nome,
       required this.sigla,
       required this.preco,
-      required this.isSelected});
+      });
 }

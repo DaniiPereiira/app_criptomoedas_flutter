@@ -53,7 +53,7 @@ class _HomePageState extends State<HomePage> {
           const BottomNavigationBarItem(
             backgroundColor: Color.fromARGB(255, 255, 255, 255),
             icon: Icon(Icons.favorite),
-            label: 'Favorits',
+            label: 'Favoritas',
           ),
         ],
 
