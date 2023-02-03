@@ -9,24 +9,28 @@ import 'package:intl/intl.dart';
 import '../Moedas/moeda.dart';
 // ignore: depend_on_referenced_packages
 import 'package:provider/provider.dart';
+import '../Repositories/compradas_repository.dart';
 import '../configs/app_settings.dart';
 
 import '../resources/text_style.dart';
 
-class MoedasPage extends StatefulWidget {
-  const MoedasPage({super.key});
+class CarteiraPage extends StatefulWidget {
+  const CarteiraPage({super.key});
 
   @override
-  State<MoedasPage> createState() => _MoedasPageState();
+  State<CarteiraPage> createState() => _CarteiraPageState();
 }
 
-class _MoedasPageState extends State<MoedasPage> {
+class _CarteiraPageState extends State<CarteiraPage> {
   String searchValue = '';
   final tabela = MoedaRepository.tabela;
   late Map<String, String> loc;
   late NumberFormat real;
   List<Moeda> selecionadas = [];
   late FavoritasRepository favoritas;
+  late  SaldoComprada valor;
+
+  late CompradasRepository compradas;
 
   readNumberFormat() {
     loc = context.watch<AppSettings>().locale;
@@ -66,16 +70,12 @@ class _MoedasPageState extends State<MoedasPage> {
           Padding(
             padding: const EdgeInsets.only(right: 20.0),
             child: PopupMenuButton(
-              
                 icon: const Icon(Icons.more_vert),
                 itemBuilder: (context) => [
-                  
                       PopupMenuItem(
                           child: TextButton(
                         child: const Text(""),
                         onPressed: () {
-                         
-
                           Navigator.pop(context);
                         },
                       )),
@@ -84,7 +84,7 @@ class _MoedasPageState extends State<MoedasPage> {
         ],
         backgroundColor: const Color.fromARGB(255, 26, 35, 29),
         title: const Text(
-          "Criptomoedas",
+          "Carteira",
           style: CriptoTextStyle.titlePageCripto,
         ),
       );
@@ -97,13 +97,10 @@ class _MoedasPageState extends State<MoedasPage> {
             child: PopupMenuButton(
                 icon: const Icon(Icons.more_vert),
                 itemBuilder: (context) => [
-                    
-                    PopupMenuItem(
+                      PopupMenuItem(
                           child: TextButton(
                         child: const Text(""),
                         onPressed: () {
-                         
-
                           Navigator.pop(context);
                         },
                       )),
@@ -123,82 +120,62 @@ class _MoedasPageState extends State<MoedasPage> {
     }
   }
 
-  mostrarDetalhes(Moeda moeda) {
-    Navigator.push(context,
-        MaterialPageRoute(builder: (_) => MostrarDetalhesPage(moeda: moeda)));
-  }
-
-  limparSelecionadas() {
-    setState(() {
-      selecionadas = [];
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     favoritas = Provider.of<FavoritasRepository>(context);
+    compradas = Provider.of<CompradasRepository>(context);
+     valor = Provider.of<SaldoComprada>(context);
     readNumberFormat();
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: appBarDinamica(),
-      body: ListView.separated(
-          itemBuilder: (BuildContext context, int moeda) {
-            return ListTile(
-                shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(50))),
-                leading: SizedBox(
-                        width: 35, child: Image.asset(tabela[moeda].icone)),
-                title:
-                    Text(tabela[moeda].nome, style: CriptoTextStyle.fontMoeda),
-                subtitle:
-                    Text(tabela[moeda].sigla, style: CriptoTextStyle.fontSigla),
-                trailing: SizedBox(
-                  width: 150,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Text(real.format(tabela[moeda].preco),
-                          style: CriptoTextStyle.fontPreco),
-                      (favoritas.lista.contains(tabela[moeda]))
-                          ? IconButton(
-                              icon: const Icon(Icons.favorite),
-                              color: const Color.fromARGB(255, 205, 205, 205),
-                              onPressed: () {
-                                setState(() {
-                                  favoritas.remove(tabela[moeda]);
-                                });
-                              },
-                            )
-                          : IconButton(
-                              icon: const Icon(Icons.favorite_border),
-                              color: const Color.fromARGB(255, 205, 205, 205),
-                              onPressed: () {
-                                setState(() {
-                                  selecionadas.add(tabela[moeda]);
-
-                                  favoritas.saveAll(selecionadas);
-                                  limparSelecionadas();
-                                });
-                              },
-                            )
-                    ],
-                  ),
-                ),
-                // selected: selecionadas.contains(tabela[moeda]),
-                // selectedTileColor: const Color.fromARGB(255, 209, 208, 208),
-                // onLongPress: () {
-                //   setState(() {
-                //     (selecionadas.contains(tabela[moeda]))
-                //         ? selecionadas.remove(tabela[moeda])
-                //         : selecionadas.add(tabela[moeda]);
-                //   });
-                // },
-                onTap: (() => mostrarDetalhes(tabela[moeda])));
+      body: Container(
+        alignment: Alignment.topCenter,
+        child: Consumer<CompradasRepository>(
+          builder: (context, compradas, child) {
+            return (compradas.compra.isEmpty)
+                ? const ListTile(
+                    leading: Icon(
+                      Icons.shopping_bag,
+                      color: Colors.white,
+                    ),
+                    title: Text(
+                      'Ainda não há moedas compradas',
+                      style: CriptoTextStyle.textfavorite,
+                    ),
+                  )
+                : ListView.separated(
+                    separatorBuilder: (__, ___) => const Divider(),
+                    padding: const EdgeInsets.all(16),
+                    itemCount: compradas.compra.length,
+                    itemBuilder: (_, moeda) {
+                      return InkWell(
+                        child: ListTile(
+                          shape: const RoundedRectangleBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(50))),
+                          leading: Column(
+                            children: [
+                              SizedBox(
+                                  width: 20,
+                                  child: Image.asset(
+                                      compradas.compra[moeda].icone)),
+                                      const SizedBox(height: 8,),
+                              Text(compradas.compra[moeda].sigla,
+                                  style: CriptoTextStyle.fontSigla),
+                            ],
+                          ),
+                          title: Text(compradas.compra[moeda].nome,
+                              style: CriptoTextStyle.fontMoeda),
+                          // trailing: 
+                          
+                        ),
+                      );
+                    },
+                  );
           },
-          padding: const EdgeInsets.all(16),
-          separatorBuilder: (__, ___) => const Divider(),
-          itemCount: tabela.length),
-     
+        ),
+      ),
     );
   }
 }

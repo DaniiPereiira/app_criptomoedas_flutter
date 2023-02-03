@@ -1,6 +1,7 @@
 import 'package:app_cripto/pages/moedas_page.dart';
 import 'package:flutter/material.dart';
 
+import 'carteira_page.dart';
 import 'favoritas_page.dart';
 
 class HomePage extends StatefulWidget {
@@ -26,6 +27,7 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: PageView(
@@ -35,6 +37,7 @@ class _HomePageState extends State<HomePage> {
         children: const [
           MoedasPage(),
           FavoritasPage(),
+          CarteiraPage(),
         ],
         onPageChanged: setPaginaAtual,
       ),
@@ -54,6 +57,11 @@ class _HomePageState extends State<HomePage> {
             backgroundColor: Color.fromARGB(255, 255, 255, 255),
             icon: Icon(Icons.favorite),
             label: 'Favoritas',
+          ),
+            const BottomNavigationBarItem(
+            backgroundColor: Color.fromARGB(255, 255, 255, 255),
+            icon: Icon(Icons.account_balance_wallet),
+            label: 'Carteira',
           ),
         ],
 

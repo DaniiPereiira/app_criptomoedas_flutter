@@ -4,8 +4,11 @@ import 'package:provider/provider.dart';
 
 import '../Moedas/moeda.dart';
 import '../Repositories/moeda_repositories.dart';
+import '../configs/app_settings.dart';
 import '../resources/text_style.dart';
 import '../widget/moeda_card.dart';
+import 'package:intl/intl.dart';
+
 
 class FavoritasPage extends StatefulWidget {
   const FavoritasPage({super.key});
@@ -18,46 +21,49 @@ class _FavoritasPageState extends State<FavoritasPage> {
   late FavoritasRepository favoritas;
   List<Moeda> selecionadas = [];
   final tabela = MoedaRepository.tabela;
+   late NumberFormat real;
+   late Map<String, String> loc;
+
+  readNumberFormat() {
+    loc = context.watch<AppSettings>().locale;
+    real = NumberFormat.currency(locale: loc['locale'], name: loc['name']);
+  }
+
+  changeLanguageButton() {
+    final locale = loc['locale'] == 'pt_BR' ? 'en_US' : 'pt_BR';
+    final name = loc['locale'] == 'pt_BR' ? '\$' : 'R\$';
+
+    return PopupMenuButton(
+     
+      icon: const Icon(Icons.language),
+      itemBuilder: (context) => [
+        PopupMenuItem(
+            child: ListTile(
+                leading: const Icon(Icons.swap_vert),
+                title: Text("Usar $locale"),
+                onTap: () {
+                  context.read<AppSettings>().setLocale(locale, name);
+                  Navigator.pop(context);
+                }))
+      ],
+    );
+  }
+  
+  
 
   appBarDinamica() {
     if (selecionadas.isEmpty) {
       return AppBar(
         actions: [
+          changeLanguageButton(),
           IconButton(
+            
             onPressed: () {
               //  showSearch(context: context, delegate: );
             },
             icon: const Icon(Icons.search),
           ),
-          Padding(
-            padding: const EdgeInsets.only(right: 20.0),
-            child: PopupMenuButton(
-                icon: const Icon(Icons.more_vert),
-                itemBuilder: (context) => [
-                      PopupMenuItem(
-                          child: TextButton(
-                        child: const Text("Selecionar todas"),
-                        onPressed: () {
-                          setState(() {
-                            selecionadas.addAll(tabela);
-                          });
-
-                          Navigator.pop(context);
-                        },
-                      )),
-                      PopupMenuItem(
-                          child: TextButton(
-                        child: const Text("Remover todas"),
-                        onPressed: () {
-                          setState(() {
-                            selecionadas.clear();
-                          });
-
-                          Navigator.pop(context);
-                        },
-                      )),
-                    ]),
-          )
+          
         ],
         backgroundColor: const Color.fromARGB(255, 26, 35, 29),
         title: const Text(
@@ -74,24 +80,12 @@ class _FavoritasPageState extends State<FavoritasPage> {
             child: PopupMenuButton(
                 icon: const Icon(Icons.more_vert),
                 itemBuilder: (context) => [
+                     
                       PopupMenuItem(
                           child: TextButton(
-                        child: const Text("Selecionar todas"),
+                        child: const Text(""),
                         onPressed: () {
-                          setState(() {
-                            selecionadas.addAll(favoritas as Iterable<Moeda>);
-                          });
-
-                          Navigator.pop(context);
-                        },
-                      )),
-                      PopupMenuItem(
-                          child: TextButton(
-                        child: const Text("Remover todas"),
-                        onPressed: () {
-                          setState(() {
-                            selecionadas.clear();
-                          });
+                         
 
                           Navigator.pop(context);
                         },
@@ -114,6 +108,7 @@ class _FavoritasPageState extends State<FavoritasPage> {
 
   @override
   Widget build(BuildContext context) {
+    readNumberFormat();
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: appBarDinamica(),
@@ -143,10 +138,6 @@ class _FavoritasPageState extends State<FavoritasPage> {
                     );
             },
           )),
-      // floatingActionButton: FloatingActionButton(onPressed: () {
-      //   Provider.of<FavoritasRepository>(context, listen: false)
-      //       .remove(tabela);
-      // }),
     );
   }
 }

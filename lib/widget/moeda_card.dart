@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 // ignore: depend_on_referenced_packages
 import 'package:intl/intl.dart';
-
+import 'package:provider/provider.dart';
 import 'package:app_cripto/Moedas/moeda.dart';
 import 'package:app_cripto/pages/mostrar_detalhes_page.dart';
 
 import '../Repositories/foavoritas_repository.dart';
 import '../Repositories/moeda_repositories.dart';
+import '../configs/app_settings.dart';
 import '../resources/text_style.dart';
 
 // ignore: must_be_immutable
@@ -25,10 +26,35 @@ class MoedaCard extends StatefulWidget {
 // final tabela = MoedaRepository.tabela;
 
 class _MoedaCardState extends State<MoedaCard> {
-  NumberFormat real = NumberFormat.currency(locale: 'pt_BR', name: 'R\$');
   late FavoritasRepository favoritas;
   List<Moeda> selecionadasFav = [];
   final tabela = MoedaRepository.tabela;
+  late NumberFormat real;
+  late Map<String, String> loc;
+
+  readNumberFormat() {
+    loc = context.watch<AppSettings>().locale;
+    real = NumberFormat.currency(locale: loc['locale'], name: loc['name']);
+  }
+
+  changeLanguageButton() {
+    final locale = loc['locale'] == 'pt_BR' ? 'en_US' : 'pt_BR';
+    final name = loc['locale'] == 'pt_BR' ? '\$' : 'R\$';
+
+    return PopupMenuButton(
+      icon: const Icon(Icons.language),
+      itemBuilder: (context) => [
+        PopupMenuItem(
+            child: ListTile(
+                leading: const Icon(Icons.swap_vert),
+                title: Text("Usar $locale"),
+                onTap: () {
+                  context.read<AppSettings>().setLocale(locale, name);
+                  Navigator.pop(context);
+                }))
+      ],
+    );
+  }
 
   abrirDetalhes() {
     Navigator.push(
@@ -39,47 +65,44 @@ class _MoedaCardState extends State<MoedaCard> {
     );
   }
 
-  selecionarMoeda() {
-    Navigator.push(context,
-        MaterialPageRoute<void>(builder: (BuildContext context) {
-      (selecionadasFav.contains(widget.moeda))
-          ? selecionadasFav.remove(widget.moeda)
-          : selecionadasFav.add(widget.moeda);
-      return const CircleAvatar(
-                  // ignore: sort_child_properties_last
-                  child: Icon(Icons.check),
-                  backgroundColor: (Color.fromARGB(255, 49, 92, 50)),
-                );
-    }));
-  }
+
+
+
 
   @override
   Widget build(BuildContext context) {
+    readNumberFormat();
     return Card(
       color: Colors.black,
       child: InkWell(
         child: ListTile(
           shape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(50))),
-          leading: (selecionadasFav.contains(widget.moeda))
-              ? const CircleAvatar(
-                  // ignore: sort_child_properties_last
-                  child: Icon(Icons.check),
-                  backgroundColor: (Color.fromARGB(255, 49, 92, 50)),
-                )
-              : SizedBox(width: 35, child: Image.asset(widget.moeda.icone)),
+          leading: SizedBox(width: 35, child: Image.asset(widget.moeda.icone)),
           title: Text(widget.moeda.nome, style: CriptoTextStyle.fontMoeda),
           subtitle: Text(widget.moeda.sigla, style: CriptoTextStyle.fontSigla),
-          trailing: Text(real.format(widget.moeda.preco),
-              style: CriptoTextStyle.fontPreco),
+          trailing: SizedBox(
+            width: 150,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Text(real.format(widget.moeda.preco),
+                    style: CriptoTextStyle.fontPreco),
+                IconButton(
+                  icon: const Icon(Icons.favorite),
+                  color: const Color.fromARGB(255, 205, 205, 205),
+                  onPressed: () {
+                    setState(() {
+                      Provider.of<FavoritasRepository>(context, listen: false)
+                          .remove(widget.moeda);
+                    });
+                  },
+                )
+              ],
+            ),
+          ),
           onTap: (() => abrirDetalhes()),
-          onLongPress: () {
-            setState(() {
-              (selecionadasFav.contains(widget.moeda))
-                  ? selecionadasFav.remove(widget.moeda)
-                  : selecionadasFav.add(widget.moeda);
-            });
-          },
+        
         ),
       ),
     );

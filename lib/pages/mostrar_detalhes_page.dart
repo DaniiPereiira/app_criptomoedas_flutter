@@ -2,10 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 // ignore: depend_on_referenced_packages
 import 'package:intl/intl.dart';
-
+// ignore: depend_on_referenced_packages
+import 'package:provider/provider.dart';
 import '../Moedas/moeda.dart';
+import '../Repositories/compradas_repository.dart';
+import '../Repositories/moeda_repositories.dart';
 import '../resources/text_style.dart';
 
+// ignore: must_be_immutable
 class MostrarDetalhesPage extends StatefulWidget {
   Moeda moeda;
 
@@ -13,6 +17,8 @@ class MostrarDetalhesPage extends StatefulWidget {
 
   @override
   State<MostrarDetalhesPage> createState() => _MostrarDetalhesPageState();
+
+
 }
 
 class _MostrarDetalhesPageState extends State<MostrarDetalhesPage> {
@@ -20,17 +26,46 @@ class _MostrarDetalhesPageState extends State<MostrarDetalhesPage> {
   final _form = GlobalKey<FormState>();
   final _valor = TextEditingController();
   double quantidade = 0;
+  List quantidadeComprada = [];
+  List<Moeda> selecionadas = [];
+  late CompradasRepository compradas;
+  final tabela = MoedaRepository.tabela;
+late  SaldoComprada valor;
 
   comprar() {
     if (_form.currentState!.validate()) {
       Navigator.pop(context);
-      ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Compra realizada com sucesso')));
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text('Compra realizada com sucesso'),
+      ));
     }
   }
 
+  salvarCarteira() {
+    setState(() {
+      (compradas.compra.contains(widget.moeda))
+          ? null
+          : selecionadas.add(widget.moeda);
+
+      compradas.saveAll(selecionadas);
+    });
+  }
+
+ 
+
+      salvarValor() {
+    valor.lista.add(quantidade);
+    (valor.lista.isEmpty) ? quantidade : 0;
+  }
+
+  
+
+
+
   @override
   Widget build(BuildContext context) {
+    compradas = Provider.of<CompradasRepository>(context);
+    valor = Provider.of<SaldoComprada>(context);
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
@@ -140,6 +175,10 @@ class _MostrarDetalhesPageState extends State<MostrarDetalhesPage> {
                   })),
                   onPressed: () {
                     comprar();
+                    setState(() {
+                      salvarCarteira();
+                      salvarValor();
+                    });
                   },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,

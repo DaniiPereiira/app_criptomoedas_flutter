@@ -11,9 +11,9 @@ class FavoritasRepository extends ChangeNotifier {
   UnmodifiableListView<Moeda> get lista => UnmodifiableListView(_lista);
 
   saveAll(List<Moeda> moedas) {
-    moedas.forEach((moeda) {
+    for (var moeda in moedas) {
       if (!_lista.contains(moeda)) _lista.add(moeda);
-    });
+    }
     notifyListeners();
   }
 
