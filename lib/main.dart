@@ -8,23 +8,28 @@ import 'package:provider/provider.dart';
 import 'Repositories/compradas_repository.dart';
 
 import 'configs/app_settings.dart';
+import 'configs/hive_config.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await HiveConfig.start();
+
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider(
-        create: (context) =>AppSettings(),
+        create: (context) => AppSettings(),
       ),
-       ChangeNotifierProvider(
-      create: (context) => FavoritasRepository(),
-  ),
-   ChangeNotifierProvider(
-      create: (context) => CompradasRepository(),
-  ),
-    ChangeNotifierProvider(
-      create: (context) => SaldoComprada(),
-  )
-  ],
+      ChangeNotifierProvider(
+        create: (context) => FavoritasRepository(),
+      ),
+      ChangeNotifierProvider(
+        create: (context) => CompradasRepository(),
+      ),
+      ChangeNotifierProvider(
+        create: (context) => SaldoComprada(),
+      )
+    ],
     child: const MyCriptoApp(),
   ));
 }

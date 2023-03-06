@@ -159,7 +159,7 @@ class _MoedasPageState extends State<MoedasPage> {
                     children: [
                       Text(real.format(tabela[moeda].preco),
                           style: CriptoTextStyle.fontPreco),
-                      (favoritas.lista.contains(tabela[moeda]))
+                      (favoritas.lista.any((fav) => fav.sigla == tabela[moeda].sigla))
                           ? IconButton(
                               icon: const Icon(Icons.favorite),
                               color: const Color.fromARGB(255, 205, 205, 205),
