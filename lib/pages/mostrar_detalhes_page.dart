@@ -17,8 +17,6 @@ class MostrarDetalhesPage extends StatefulWidget {
 
   @override
   State<MostrarDetalhesPage> createState() => _MostrarDetalhesPageState();
-
-
 }
 
 class _MostrarDetalhesPageState extends State<MostrarDetalhesPage> {
@@ -30,7 +28,7 @@ class _MostrarDetalhesPageState extends State<MostrarDetalhesPage> {
   List<Moeda> selecionadas = [];
   late CompradasRepository compradas;
   final tabela = MoedaRepository.tabela;
-late  SaldoComprada valor;
+  late SaldoComprada valor;
 
   comprar() {
     if (_form.currentState!.validate()) {
@@ -51,16 +49,10 @@ late  SaldoComprada valor;
     });
   }
 
- 
-
-      salvarValor() {
+  salvarValor() {
     valor.lista.add(quantidade);
     (valor.lista.isEmpty) ? quantidade : 0;
   }
-
-  
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -103,6 +95,8 @@ late  SaldoComprada valor;
             Form(
               key: _form,
               child: TextFormField(
+              
+             
                 controller: _valor,
                 style: CriptoTextStyle.valorMoedaDetail,
                 decoration: const InputDecoration(
@@ -121,7 +115,7 @@ late  SaldoComprada valor;
                     labelStyle: CriptoTextStyle.valorNomeDetail,
                     border: OutlineInputBorder()),
                 keyboardType: TextInputType.number,
-                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                inputFormatters: [ FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d*')),],
                 onChanged: (value) {
                   setState(() {
                     quantidade = (value.isEmpty)

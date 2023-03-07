@@ -1,3 +1,5 @@
+// ignore_for_file: depend_on_referenced_packages
+
 import 'dart:collection';
 import 'package:flutter/cupertino.dart';
 import '../Moedas/moeda.dart';
@@ -35,12 +37,12 @@ class FavoritasRepository extends ChangeNotifier {
   UnmodifiableListView<Moeda> get lista => UnmodifiableListView(_lista);
 
   saveAll(List<Moeda> moedas) {
-    moedas.forEach((moeda) {
+    for (var moeda in moedas) {
       if (!_lista.any((atual) => atual.sigla == moeda.sigla)) {
         _lista.add(moeda);
         box.put(moeda.sigla, moeda);
       }
-    });
+    }
     notifyListeners();
   }
 

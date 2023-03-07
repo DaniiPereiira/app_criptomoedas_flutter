@@ -1,6 +1,5 @@
 import 'package:app_cripto/Repositories/foavoritas_repository.dart';
 import 'package:app_cripto/Repositories/moeda_repositories.dart';
-import 'package:app_cripto/pages/mostrar_detalhes_page.dart';
 import 'package:flutter/material.dart';
 //import 'package:easy_search_bar/easy_search_bar.dart';
 // ignore: depend_on_referenced_packages

@@ -1,5 +1,7 @@
+// ignore_for_file: depend_on_referenced_packages
+
 import 'package:flutter/material.dart';
-// ignore: depend_on_referenced_packages
+
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:app_cripto/Moedas/moeda.dart';

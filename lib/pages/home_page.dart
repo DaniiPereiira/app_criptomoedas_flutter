@@ -2,6 +2,7 @@ import 'package:app_cripto/pages/moedas_page.dart';
 import 'package:flutter/material.dart';
 
 import 'carteira_page.dart';
+import 'configuaracoes_page.dart';
 import 'favoritas_page.dart';
 
 class HomePage extends StatefulWidget {
@@ -31,19 +32,21 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: PageView(
-       physics: const NeverScrollableScrollPhysics(),
+        physics: const NeverScrollableScrollPhysics(),
         controller: pc,
         // ignore: sort_child_properties_last
         children: const [
           MoedasPage(),
           FavoritasPage(),
           CarteiraPage(),
+          ConfiguracoesPage(),
         ],
         onPageChanged: setPaginaAtual,
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: paginaAtual,
         backgroundColor: const Color.fromARGB(255, 58, 70, 58),
+        type: BottomNavigationBarType.fixed,
         // ignore: prefer_const_literals_to_create_immutables
         items: [
           const BottomNavigationBarItem(
@@ -58,10 +61,15 @@ class _HomePageState extends State<HomePage> {
             icon: Icon(Icons.favorite),
             label: 'Favoritas',
           ),
-            const BottomNavigationBarItem(
+          const BottomNavigationBarItem(
             backgroundColor: Color.fromARGB(255, 255, 255, 255),
             icon: Icon(Icons.account_balance_wallet),
             label: 'Carteira',
+          ),
+          const BottomNavigationBarItem(
+            backgroundColor: Color.fromARGB(255, 255, 255, 255),
+            icon: Icon(Icons.settings),
+            label: 'Configurações',
           ),
         ],
 

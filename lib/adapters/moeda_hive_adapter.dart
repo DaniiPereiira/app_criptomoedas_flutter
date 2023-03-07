@@ -1,4 +1,5 @@
-import 'dart:html';
+
+// ignore_for_file: depend_on_referenced_packages
 
 import 'package:app_cripto/Moedas/moeda.dart';
 import 'package:hive/hive.dart';
